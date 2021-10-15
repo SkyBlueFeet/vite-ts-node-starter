@@ -1,0 +1,44 @@
+{
+  "ts-node": {
+    // It is faster to skip typechecking.
+    // Remove if you want ts-node to do typechecking.
+    "transpileOnly": true,
+
+    "target": "es5",
+    "useDefineForClassFields": true,
+    "module": "CommonJS",
+
+    "files": true,
+
+    "compilerOptions": {
+      // compilerOptions specified here will override those declared below,
+      // but *only* in ts-node.  Useful if you want ts-node and tsc to use
+      // different options with a single tsconfig.json.
+    }
+  },
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    "paths": {
+      "server/*": ["server/*"]
+    },
+    "types": ["node"],
+    "lib": ["esnext", "dom"]
+  },
+  "include": [
+    "./env.d.ts",
+    "server/**/*.ts",
+    "client/**/*.ts",
+    "client/**/*.d.ts",
+    "client/**/*.tsx",
+    "client/**/*.vue"
+  ]
+}

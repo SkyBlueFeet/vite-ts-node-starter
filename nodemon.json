@@ -1,0 +1,6 @@
+{
+  "watch": ["server"],
+  "ext": "ts",
+  "exec": "ts-node --files --project ./tsconfig.server.json -r tsconfig-paths/register server/index.ts",
+  "stdout": true
+}
