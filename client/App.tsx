@@ -1,7 +1,7 @@
-import { HelloWorld } from './components/HelloWorld';
-import { defineComponent } from 'vue';
-import logo from './assets/logo.png';
-import './App.scss';
+import { HelloWorld } from "./components/HelloWorld";
+import { defineComponent } from "vue";
+import logo from "./assets/logo.png";
+import "./App.scss";
 
 interface InputProps {
   value: string;

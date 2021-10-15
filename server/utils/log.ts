@@ -1,9 +1,8 @@
-import { Context, Next } from 'koa';
-import Log4js, { levels } from 'log4js';
+import Log4js, { levels, Format } from "log4js";
 
-const LogPath = 'logs';
+const LogPath = "logs";
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV === "development";
 
 function getLogFileName(name: string) {
   return `${LogPath}/${name}.log`;
@@ -11,82 +10,82 @@ function getLogFileName(name: string) {
 
 const startup: Record<string, Log4js.Appender> = {
   startup: {
-    type: 'file',
-    filename: getLogFileName('startup'),
-    category: 'startup',
+    type: "file",
+    filename: getLogFileName("startup"),
+    category: "startup",
   },
 
   startupError: {
-    type: 'logLevelFilter',
-    level: 'ERROR',
-    appender: 'fatalFile',
+    type: "logLevelFilter",
+    level: "ERROR",
+    appender: "fatalFile",
   },
 };
 
 const runtime: Record<string, Log4js.Appender> = {
   app: {
-    type: 'dateFile',
-    filename: getLogFileName('app'),
-    pattern: 'yyyy-MM-dd',
+    type: "dateFile",
+    filename: getLogFileName("app"),
+    pattern: "yyyy-MM-dd",
     alwaysIncludePattern: true,
     keepFileExt: true,
   },
   errors: {
-    type: 'logLevelFilter',
-    level: 'ERROR',
-    appender: 'errorFile',
+    type: "logLevelFilter",
+    level: "ERROR",
+    appender: "errorFile",
   },
 };
 
 const config: Log4js.Configuration = {
   appenders: {
     access: {
-      type: 'dateFile',
-      filename: getLogFileName('access'),
-      pattern: 'yyyy-MM-dd',
+      type: "dateFile",
+      filename: getLogFileName("access"),
+      pattern: "yyyy-MM-dd",
       alwaysIncludePattern: true,
       keepFileExt: true,
-      category: 'http',
+      category: "http",
     },
 
     errorFile: {
-      type: 'file',
-      filename: getLogFileName('errors'),
+      type: "file",
+      filename: getLogFileName("errors"),
     },
 
     fatalFile: {
-      type: 'file',
-      filename: getLogFileName('fatals'),
+      type: "file",
+      filename: getLogFileName("fatals"),
     },
     dev: {
-      type: 'console',
+      type: "console",
     },
     out: {
-      type: 'stdout',
+      type: "stdout",
       layout: {
-        type: 'pattern',
-        pattern: '%d %p %c %X{user} %m%n',
+        type: "pattern",
+        pattern: "%d %p %c %X{user} %m%n",
       },
     },
     ...startup,
     ...runtime,
   },
   categories: {
-    default: { appenders: Object.keys(runtime), level: 'ALL' },
-    http: { appenders: ['access'], level: 'ALL' },
-    startup: { appenders: Object.keys(startup), level: 'ALL' },
+    default: { appenders: Object.keys(runtime), level: "ALL" },
+    http: { appenders: ["access"], level: "ALL" },
+    startup: { appenders: Object.keys(startup), level: "ALL" },
   },
 };
 
 if (isDev) {
   for (const categories of Object.keys(config.categories)) {
-    config.categories[categories].appenders.push('dev');
+    config.categories[categories].appenders.push("dev");
   }
 }
 
 Log4js.configure(config);
 
-function CreateLogger(type: string, level: string = 'DEBUG') {
+function CreateLogger(type?: string, level: string = "DEBUG") {
   const logger = Log4js.getLogger(type);
 
   logger.level = level;
@@ -94,10 +93,10 @@ function CreateLogger(type: string, level: string = 'DEBUG') {
   return logger;
 }
 
-const HttpLoggerMiddleware = function createHttpMiddleware() {
-  const httpLog = Log4js.getLogger('http');
+const createKoaConnect = function createHttpMiddleware() {
+  const httpLog = Log4js.getLogger("http");
 
-  return async function (ctx: Context, next: Next) {
+  return async function (ctx: Record<string, any>, next: Function) {
     const start = Date.now();
 
     await next();
@@ -106,6 +105,14 @@ const HttpLoggerMiddleware = function createHttpMiddleware() {
   };
 };
 
-const logger = CreateLogger('default');
+const createExpressConnect = function createHttpMiddleware() {
+  const httpLog = Log4js.getLogger("http");
 
-export { CreateLogger, HttpLoggerMiddleware, logger };
+  return Log4js.connectLogger(httpLog, {
+    // format:Log4js.
+  });
+};
+
+const logger = CreateLogger();
+
+export { CreateLogger, createKoaConnect, createExpressConnect, logger };

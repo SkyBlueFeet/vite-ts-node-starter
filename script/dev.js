@@ -1,19 +1,15 @@
-const { createServer, createLogger } = require('vite');
-const chalk = require('chalk');
-const nodemon = require('nodemon');
-const path = require('path');
+const { createServer, createLogger } = require("vite");
+const chalk = require("chalk");
+const nodemon = require("nodemon");
+const path = require("path");
 
-require('dotenv').config();
-
-require('dotenv').config({
-  path: path.resolve('.env.' + process.env.NODE_ENV),
-});
+require("./env");
 
 /**
  * @type import('consola').Consola
  */
-const consola = require('consola');
-const { isUndefined, isArray } = require('lodash');
+const consola = require("consola");
+const { isUndefined, isArray } = require("lodash");
 
 const startDate = Date.now();
 
@@ -21,12 +17,12 @@ async function Develope() {
   const server = await createServer();
 
   if (!server.httpServer) {
-    throw new Error('HTTP server not available');
+    throw new Error("HTTP server not available");
   }
   await server.listen();
   const info = server.config.logger.info;
   info(
-    chalk.cyan(`\n  vite v${require('vite/package.json').version}`) +
+    chalk.cyan(`\n  vite v${require("vite/package.json").version}`) +
       chalk.green(` dev server running at:\n`),
     {
       clear: !server.config.logger.hasWarned,
@@ -37,11 +33,11 @@ async function Develope() {
 
 Develope()
   .then(() => {
-    const NodemonClient = nodemon('');
+    const NodemonClient = nodemon("");
 
-    NodemonClient.once('start', (files) => {
+    NodemonClient.once("start", (files) => {
       consola.log(
-        chalk.cyan(`\n  node-server v${require('../package.json').version}`) +
+        chalk.cyan(`\n  node-server v${require("../package.json").version}`) +
           chalk.green(` running at:\n`)
       );
 
@@ -56,18 +52,18 @@ Develope()
       );
     });
 
-    NodemonClient.on('restart', (files) => {
+    NodemonClient.on("restart", (files) => {
       if (!isUndefined(files) && isArray(files) && files.length > 0) {
         files = files
           .map((filename) => path.relative(process.cwd(), filename))
-          .join(',');
+          .join(",");
       } else {
-        files = '';
+        files = "";
       }
 
       console.info(
         chalk.green(new Date().toLocaleString()),
-        chalk.cyan('file update'),
+        chalk.cyan("file update"),
         files
       );
     });
@@ -75,7 +71,7 @@ Develope()
     return NodemonClient;
   })
   .catch((e) => {
-    createLogger('error').error(
+    createLogger("error").error(
       chalk.red(`error when starting dev server:\n${e.stack}`),
       {
         error: e,

@@ -9,18 +9,14 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development node script/dev",
-    "start": "nodemon",
-    "build": "cross-env NODE_ENV=development node script/build",
-    "pro": "npx pm2 start ecosystem.config.js --env production",
-    "restart": "pm2 restart ecosystem.config.js --env production",
-    "stop": "npx pm2 stop ecosystem.config.js"
+    "build": "cross-env NODE_ENV=production node script/build",
+    "preview": "cross-env NODE_ENV=production node script/preview"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
     "lodash": "^4.17.21",
     "log4js": "^6.3.0",
     "nodemon": "^1.19.0",
-    "pm2": "^3.5.0",
     "vue": "^3.2.16",
     "yaml": "^1.10.2"
   },
@@ -33,9 +29,6 @@
     "consola": "^2.15.3",
     "cross-env": "^7.0.3",
     "esbuild-loader": "^2.16.0",
-    "fs-extra": "^10.0.0",
-    "live-server": "^1.2.1",
-    "rimraf": "^3.0.2",
     "rollup-plugin-external-globals": "^0.6.1",
     "sass": "^1.42.1",
     "serve-static": "^1.14.1",
@@ -44,6 +37,7 @@
     "tsconfig-paths-webpack-plugin": "^3.5.1",
     "typescript": "^4.4.3",
     "vite": "^2.6.7",
+    "vite-tsconfig-paths": "^3.3.17",
     "vue-tsc": "^0.3.0",
     "webpack": "^5.58.2",
     "webpack-clean": "^1.2.5",
