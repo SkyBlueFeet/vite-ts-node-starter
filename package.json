@@ -1,11 +1,11 @@
 {
   "name": "vite-ts-node-starter",
   "version": "1.0.0",
-  "description": "一个简单的koa+typescript+typeorm的起手式",
+  "description": "一个简单的vite+ts+node起手式",
   "tags": [
-    "orm",
     "typescript",
-    "koa"
+    "vite",
+    "node"
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development node script/dev",
