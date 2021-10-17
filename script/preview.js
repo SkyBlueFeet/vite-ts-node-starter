@@ -1,37 +1,32 @@
-const finalHandler = require("finalhandler");
-const staticServe = require("serve-static");
-const http = require("http");
 const path = require("path");
+const shelljs = require("shelljs");
+const { existsSync } = require("fs");
 
 /**
  * @type import('consola').Consola
  */
 const consola = require("consola");
 
+process.env.NODE_ENV = "production";
+
 require("./env");
 
-const port = 8080;
+const port = process.env.SERVER_PORT;
+const dir = path.resolve(process.env.DEST, process.env.SERVER_DEST);
 
-const serve = staticServe(`${process.env.DEST}/client`, {
-  index: "index.html",
-});
+if (!existsSync(dir)) {
+  consola.error("The dest directory was not found");
+  process.exit();
+}
 
-const server = http.createServer(function (req, res) {
-  serve(req, res, finalHandler(req, res));
-});
+shelljs.cd(dir);
 
-server.listen(port);
+const child_process = shelljs.exec("npm run start", { async: true });
 
-server.on("listening", () => {
+child_process.on("spawn", () => {
   consola.success(`The application run at http://localhost:${port}`);
 });
 
-server.on("error", (err) => {
-  consola.error(err.message);
+child_process.on("error", (err) => {
+  consola.error(err);
 });
-
-require(path.resolve(
-  process.env.DEST,
-  process.env.SERVER_DEST,
-  process.env.FILE_NAME
-));

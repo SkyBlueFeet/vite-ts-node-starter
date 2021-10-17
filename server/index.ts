@@ -1,29 +1,23 @@
-import http from "http";
-import { PORT } from "./config";
+import express from "express";
+import { staticServer } from "./middlewares/serve";
+
+const app = express();
+
+import {
+  PORT,
+  NODE_ENV,
+  CLIENT_PORT,
+  CLIENT_DEST,
+  SERVER_PORT,
+} from "./config";
 import { logger } from "./utils/log";
 
-const server = http.createServer();
+app.use(staticServer(NODE_ENV, CLIENT_PORT, CLIENT_DEST));
 
-server.listen(PORT, () => {});
-
-server.addListener("request", (req, res) => {
-  var html = `<html>
-						<head>
-							<meta charset="utf-8">
-							<title>INDEX</title>
-						</head>
-							<body>
-								<h1>Hello World!</h1>
-							</body>
-						</html>`;
-  res.writeHead(200, { "Content-Type": "text/html" });
-  res.write(html);
-  res.end();
+app.use(process.env.API_PROFIX, (req, res) => {
+  res.send({ api: req.path });
 });
 
-server.on("listening", () => {
-  logger.info("server is running at http://localhost:" + PORT);
-});
-server.on("error", function (err) {
-  logger.error(err.message);
+app.listen(PORT, () => {
+  logger.info(`The application is run at http://localhost:${PORT}`);
 });

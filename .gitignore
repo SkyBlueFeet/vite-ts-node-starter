@@ -4,4 +4,4 @@ yarn.lock
 package.json.lock
 *.local
 logs
-build
+dest

@@ -1,6 +1,6 @@
 # vite-ts-node-starter
 
-[中文文档]('./README.md')|英文文档
+[中文文档](./README.md)|英文文档
 
 ## Description
 
@@ -10,7 +10,7 @@
 - The node server is packaged by webpack, and executed by ts-node during development, supporting tsconfig.json`paths`
 - You can manually integrate server-side frameworks, such as `express`, `koa`, etc.
 
-## Refence
+## Reference
 
 [ts-koa-starter](https://github.com/Vibing/ts-koa-starter)
 [vite](https://vitejs.dev/)
