@@ -89,8 +89,6 @@ async function copyProject() {
     JSON.stringify(pm2ConfigData, null, 2)
   );
 
-  await promisify(copy)(".env*", path.resolve(dest));
-
   return;
 }
 

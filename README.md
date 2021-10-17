@@ -29,7 +29,7 @@ npm run restart // 生产环境下重启程序
 ## Tips
 - 打包后的`dest`目录可以复制到任何地方执行
 - 尽量将运行时使用的依赖放到package.json中的dependencies,因为build时会删除devDependencies,即生产环境中不会安装因为build时会删除devDependencies下的依赖，如有其他需求请修改`script/build.js`。
-- 生产环境下使用pm2执行程序，你可以在生成目录下的pm2.config.json文件中查看或修改配置文件
+- 生产环境下使用pm2执行程序，你可以在生成目录下的app.config.json文件中查看或修改配置文件
 
 
 ## Reference

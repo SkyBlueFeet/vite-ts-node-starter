@@ -2,6 +2,8 @@ const NodeExternals = require("webpack-node-externals");
 const WebpackClean = require("webpack-clean");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 const path = require("path");
+const { DefinePlugin } = require("webpack");
+const env = require("./env");
 
 module.exports = {
   entry: "./server/index.ts",
@@ -45,5 +47,13 @@ module.exports = {
       },
     ],
   },
-  plugins: [new WebpackClean()],
+  plugins: [
+    new WebpackClean(),
+    new DefinePlugin(
+      Object.keys(env).reduce((prev, cur) => {
+        prev[`process.env.${cur}`] = JSON.stringify(env[cur]);
+        return prev;
+      }, {})
+    ),
+  ],
 };
