@@ -1,6 +1,6 @@
 {
   "name": "vite-ts-node-starter",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "一个简单的vite+ts+node起手式",
   "tags": [
     "typescript",
@@ -8,23 +8,19 @@
     "node"
   ],
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node script/dev",
-    "build": "cross-env NODE_ENV=production node script/build",
+    "dev": "node script/dev",
+    "build": "node script/build",
     "preview": "node script/preview"
   },
   "dependencies": {
-    "cross-env": "^7.0.3",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "lodash": "^4.17.21",
     "log4js": "^6.3.0",
     "pm2": "^5.1.2",
     "serve-static": "^1.14.1",
-    "vue": "^3.2.16",
-    "yaml": "^1.10.2"
+    "vue": "^3.2.16"
   },
   "devDependencies": {
-    "nodemon": "^1.19.0",
     "@types/express": "^4.17.13",
     "@types/lodash": "^4.14.175",
     "@types/node": "^12.0.0",
@@ -32,7 +28,10 @@
     "@vitejs/plugin-vue-jsx": "^1.2.0",
     "chalk": "^4.1.2",
     "consola": "^2.15.3",
+    "dotenv": "^8.2.0",
     "esbuild-loader": "^2.16.0",
+    "nodemon": "^1.19.0",
+    "rimraf": "^3.0.2",
     "rollup-plugin-external-globals": "^0.6.1",
     "sass": "^1.42.1",
     "shelljs": "^0.8.4",
@@ -44,7 +43,6 @@
     "vite-tsconfig-paths": "^3.3.17",
     "vue-tsc": "^0.3.0",
     "webpack": "^5.58.2",
-    "webpack-clean": "^1.2.5",
     "webpack-cli": "^4.9.0",
     "webpack-node-externals": "^3.0.0"
   }

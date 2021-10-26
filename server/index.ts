@@ -1,5 +1,5 @@
-import express from "express";
-import { staticServer } from "./middlewares/serve";
+import express from 'express';
+import { staticServer } from './middlewares/serve';
 
 const app = express();
 
@@ -9,8 +9,8 @@ import {
   CLIENT_PORT,
   CLIENT_DEST,
   SERVER_PORT,
-} from "./config";
-import { logger } from "./utils/log";
+} from './config';
+import { logger } from './utils/log';
 
 app.use(staticServer(NODE_ENV, CLIENT_PORT, CLIENT_DEST));
 

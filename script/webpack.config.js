@@ -1,23 +1,24 @@
-const NodeExternals = require("webpack-node-externals");
-const WebpackClean = require("webpack-clean");
-const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-const path = require("path");
-const { DefinePlugin } = require("webpack");
-const env = require("./env");
+const NodeExternals = require('webpack-node-externals');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const path = require('path');
+const env = require('./env');
+const { EnvironmentPlugin } = require('webpack');
 
 module.exports = {
-  entry: "./server/index.ts",
-  mode: "production",
-  target: "node16.10",
-  devtool: "inline-source-map",
+  entry: {
+    main: './server/index.ts',
+  },
+  mode: 'production',
+  target: 'node16.10',
+  devtool: 'source-map',
   externalsPresets: { node: true },
-  externals: [NodeExternals({}), /^(cesium)$/i],
+  externals: [NodeExternals({})],
   resolve: {
-    extensions: [".js", ".ts", "mjs", ".json", ".wasm", ".cjs"],
+    extensions: ['.js', '.ts', 'mjs', '.json', '.wasm', '.cjs'],
     plugins: [new TsconfigPathsPlugin()],
   },
   output: {
-    filename: process.env.FILE_NAME,
+    filename: '[name].js',
     path: path.resolve(process.env.DEST, process.env.SERVER_DEST),
   },
   node: {
@@ -28,32 +29,25 @@ module.exports = {
     rules: [
       {
         test: /\.(js|cjs|mjs)$/,
-        loader: "esbuild-loader",
+        loader: 'esbuild-loader',
         exclude: [/node_modules/],
         options: {
-          loader: "js", // Remove this if you're not using JSX
-          target: "es2015", // Syntax to compile to (see options below for possible values)
+          loader: 'js', // Remove this if you're not using JSX
+          target: 'es2015', // Syntax to compile to (see options below for possible values)
+          tsconfigRaw: require('../tsconfig.server.json'),
         },
       },
       {
         test: /\.ts$/,
-        loader: "esbuild-loader",
+        loader: 'esbuild-loader',
         exclude: [/node_modules/],
         options: {
-          loader: "ts", // Or 'ts' if you don't need tsx
-          target: "es2015",
-          tsconfigRaw: require("../tsconfig.server.json"),
+          loader: 'ts', // Or 'ts' if you don't need tsx
+          target: 'es2015',
+          tsconfigRaw: require('../tsconfig.server.json'),
         },
       },
     ],
   },
-  plugins: [
-    new WebpackClean(),
-    new DefinePlugin(
-      Object.keys(env).reduce((prev, cur) => {
-        prev[`process.env.${cur}`] = JSON.stringify(env[cur]);
-        return prev;
-      }, {})
-    ),
-  ],
+  plugins: [new EnvironmentPlugin(Object.keys(env))],
 };
