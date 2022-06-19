@@ -1,9 +1,10 @@
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import vue from "@vitejs/plugin-vue";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import TSConfigPaths from "vite-tsconfig-paths";
 import path from "path";
 
+console.log(path.resolve(process.env.DEST, process.env.CLIENT_DEST))
 // https://vitejs.dev/config/
 export default defineConfig({
   root: "./client",

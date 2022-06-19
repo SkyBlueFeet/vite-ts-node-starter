@@ -1,0 +1,6 @@
+Host: 'localhost'
+ClientConfig:
+  Port: 3090
+ServerConfig:
+  Port: 8999
+  HtmlDir: html

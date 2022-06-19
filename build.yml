@@ -1,0 +1,5 @@
+FILE_NAME: main.js
+DEST: dest
+SERVER_DEST: ./server
+CLIENT_DEST: html
+CopyFiles: [ 'config.yml','tsconfig.json' ]

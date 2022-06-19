@@ -1,23 +1,17 @@
-import express from 'express';
-import { staticServer } from './middlewares/serve';
+import express from 'express'
+import {staticServer} from './middlewares/serve'
 
-const app = express();
+import {CLIENT_DEST, CLIENT_PORT, NODE_ENV, PORT} from './config'
+import {logger} from './utils/log'
 
-import {
-  PORT,
-  NODE_ENV,
-  CLIENT_PORT,
-  CLIENT_DEST,
-  SERVER_PORT,
-} from './config';
-import { logger } from './utils/log';
+const app = express()
 
-app.use(staticServer(NODE_ENV, CLIENT_PORT, CLIENT_DEST));
+app.use(staticServer(NODE_ENV, CLIENT_PORT, CLIENT_DEST))
 
-app.use(process.env.API_PROFIX, (req, res) => {
-  res.send({ api: req.path });
-});
+app.use("/api", (req, res) => {
+  res.send({api: req.path})
+})
 
 app.listen(PORT, () => {
-  logger.info(`The application is run at http://localhost:${PORT}`);
-});
+  logger.info(`The application is run at http://localhost:${PORT}`)
+})

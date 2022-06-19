@@ -3,112 +3,98 @@
  * @author skyblueFeet
  */
 
-const webpack = require('webpack');
-const { build: buildVite } = require('vite');
-const { writeFile, stat, mkdir } = require('fs/promises');
-const fs = require('fs');
+const {build: buildVite} = require('vite')
+const {writeFile, stat, mkdir} = require('fs/promises')
+const {cp} = require('shelljs')
 
 /**
  * @type import('consola').Consola
  */
-const consola = require('consola');
-const path = require('path');
+const consola = require('consola')
+const path = require('path')
 
-process.env.NODE_ENV = 'production';
+require('./env')
 
-require('./env');
+const {existsSync} = require('fs')
 
-const { existsSync } = require('fs');
+const {clean} = require('./clean')
 
-const dest = path.resolve(process.env.DEST);
+const package = require('../package.json')
+const {buildServerByWebpack} = require("./build.webpack");
+const {buildServerByTsc} = require("./build.tsc");
+const _ = require("lodash");
 
-const WebpackConfig = require('./webpack.config.js');
+const scriptArgv = process.argv.slice(2)
 
-const package = require('../package.json');
+const useWebpack = scriptArgv.includes('--webpack')
 
 const pm2ConfigData = {
-  name: package.name,
-  script: 'main.js',
-};
-const pm2ConfigName = './app.config.json';
-
-async function buildServerPack() {
-  consola.info('start Server Pack Build', '...');
-  return new Promise((resolve, reject) => {
-    webpack(WebpackConfig, (err, stats) => {
-      if (err) return reject(err);
-      process.stdout.write(
-        stats.toString({
-          colors: true,
-          modules: false,
-          children: true, // If you are using ts-loader, setting this to true will make TypeScript errors show up during build.
-          chunks: false,
-          chunkModules: false,
-        }) + '\n\n'
-      );
-
-      if (stats.hasErrors()) {
-        return reject(new Error('Build failed with errors.'));
-      }
-
-      resolve(undefined);
-    });
-  });
+    name: package.name,
+    script: './server/index.js',
+    interpreter_args: "-r tsconfig-paths/register"
 }
+const pm2ConfigName = './app.config.json'
+
+const destRoot = path.resolve(process.env.DEST)
+const CopyFiles = _.get(process.env, 'CopyFiles', '').split(',')
+const isRun = scriptArgv.includes('-r')
 
 async function copyProject() {
-  //  删除构建文件夹
-  if (existsSync(dest)) {
-    const fileStat = await stat(dest);
+    consola.info('start Copy Required File', '...')
+    if (existsSync(destRoot)) {
+        const fileStat = await stat(destRoot)
 
-    if (fileStat.isDirectory()) {
-      require('rimraf').sync(dest);
+        if (!fileStat.isDirectory()) {
+            await mkdir(destRoot)
+        } else {
+            await clean(path.resolve(destRoot, '*'))
+        }
+    } else {
+        await mkdir(destRoot)
     }
-  }
 
-  // 创建构建文件夹
-  await mkdir(dest);
+    package.devDependencies = undefined
 
-  const package = require('../package.json');
+    package.scripts = {
+        start: 'pm2 start' + ` ${pm2ConfigName}`,
+        stop: 'pm2 stop' + ` ${pm2ConfigName}`,
+        restart: 'pm2 restart' + ` ${pm2ConfigName}`,
+        uninstall: 'pm2 kill',
+        info: 'pm2 info' + ` ${pm2ConfigName}`,
+    }
 
-  // 构建版本不适用开发依赖
-  package.devDependencies = undefined;
+    await writeFile(
+        path.resolve(destRoot, 'package.json'),
+        JSON.stringify(package, null, 2)
+    )
 
-  package.scripts = {
-    start: 'pm2 start' + ` ${pm2ConfigName}`,
-    stop: 'pm2 stop' + ` ${pm2ConfigName}`,
-    restart: 'pm2 restart' + ` ${pm2ConfigName}`,
-    uninstall: 'pm2 kill',
-    info: 'pm2 info' + ` ${pm2ConfigName}`,
-    uninstall: 'pm2 kill',
-  };
+    await writeFile(
+        path.resolve(destRoot, pm2ConfigName),
+        JSON.stringify(pm2ConfigData, null, 2)
+    )
 
-  await writeFile(
-    path.resolve(dest, 'package.json'),
-    JSON.stringify(package, null, 2)
-  );
+    cp('-rf', CopyFiles, destRoot)
 
-  await writeFile(
-    path.resolve(dest, pm2ConfigName),
-    JSON.stringify(pm2ConfigData, null, 2)
-  );
-
-  return;
+    // await promisify(copy)(['config.yml'], destRoot)
 }
 
-copyProject()
-  .then(() => {
-    return buildServerPack();
-  })
-  .then(() => {
-    consola.success('Server Pack Build complete!');
+if (isRun) {
+    copyProject()
+        .then(() => {
+            return useWebpack ? buildServerByWebpack() : buildServerByTsc()
+        })
+        .then(info => {
+            if (info) consola.info(info)
+            consola.success('Server Pack Build complete!')
 
-    return buildVite();
-  })
-  .then((rout) => {
-    consola.success('Pack Success');
-  })
-  .catch((err) => {
-    consola.error(err);
-    console.log(err);
-  });
+            return buildVite()
+        })
+        .then(rout => {
+            consola.success('Pack Success')
+        })
+        .catch(err => {
+            consola.error(err)
+        })
+
+}
+

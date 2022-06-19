@@ -1,13 +1,34 @@
-const dotenv = require('dotenv');
-const path = require('path');
+const path = require('path')
+const _ = require('lodash')
+const YAML = require('yaml')
 
-const env1 = dotenv.config();
+const NODE_ENV = process.env.NODE_ENV
 
-const env2 = dotenv.config({
-  path: path.resolve('.env.' + process.env.NODE_ENV),
-});
+function resolve(argv) {
+    return path.resolve(process.cwd(), argv)
+}
+
+const fs = require('fs')
+
+const buildConfig = YAML.parse(
+    fs.readFileSync(resolve('./build.yml')).toString()
+)
+
+const AppConfig = YAML.parse(
+    fs.readFileSync(resolve('./config.yml')).toString()
+)
+
+const env = {
+    SERVER_PORT: AppConfig.ServerConfig.Port,
+    CLIENT_PORT: AppConfig.ClientConfig.Port,
+}
+
+_.assign(env, buildConfig)
+
+for (const key of Object.keys(env)) {
+    process.env[key] = env[key]
+}
 
 module.exports = {
-  ...env1.parsed,
-  ...env2.parsed,
-};
+    ...env
+}
