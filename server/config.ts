@@ -4,7 +4,7 @@ import YAML from "yaml";
 
 export const NODE_ENV = process.env.NODE_ENV
 
-function resolve(argv) {
+function resolve(argv:string) {
     return path.resolve(process.cwd(), argv)
 }
 
@@ -14,7 +14,7 @@ const AppConfig = YAML.parse(
     fs.readFileSync(resolve('./config.yml')).toString()
 )
 
-const env = {
+const env:Record<string,string> = {
     SERVER_PORT: AppConfig.ServerConfig.Port,
     CLIENT_PORT: AppConfig.ClientConfig.Port,
     CLIENT_DEST: AppConfig.ServerConfig.HtmlDir

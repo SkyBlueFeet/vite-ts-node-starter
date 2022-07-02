@@ -5,3 +5,9 @@ package.json.lock
 *.local
 logs
 dest
+html
+
+server/**/*.js
+server/**/*.js.map
+
+**/*.log
